@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "rust-lang.rust-analyzer",
+    "clangd.clangd",
+    "golang.go",
+    "ms-azuretools.vscode-docker"
+  ]
+}
