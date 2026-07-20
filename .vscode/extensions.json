@@ -3,7 +3,7 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "rust-lang.rust-analyzer",
-    "clangd.clangd",
+    "llvm-vs-code-extensions.vscode-clangd",
     "golang.go",
     "ms-azuretools.vscode-docker"
   ]

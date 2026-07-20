@@ -1,6 +1,6 @@
 # Rust
 /rust-db/target/
-/rust-db/quotes.db
+/rust-db/quotes.*
 
 # C++
 /cpp-engine/build/
