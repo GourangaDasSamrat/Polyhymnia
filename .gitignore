@@ -1,0 +1,13 @@
+# Rust
+/rust-db/target/
+/rust-db/quotes.db
+
+# C++
+/cpp-engine/build/
+
+# Go
+/go-gateway/bin/
+/go-gateway/proto/*.pb.go
+
+# Misc
+.DS_Store

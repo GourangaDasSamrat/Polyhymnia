@@ -1,0 +1,16 @@
+# Ignore build artifacts and generated files
+node_modules
+dist
+build
+cpp-engine/build
+rust-db/target
+go-gateway/bin
+**/*.pb.go
+**/*.pb.cc
+**/*.pb.h
+docker
+.docker
+.git
+.vscode
+
+# frontend static files are intended to be formatted; exclude nothing else here
