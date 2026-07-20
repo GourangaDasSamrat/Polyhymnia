@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package polyhymnia;
+
+option go_package = "polyhymnia/proto;quotepb";
+
+// QuoteDb is implemented by the Rust service. It owns the SQLite
+// database and is the only service allowed to touch it directly.
+service QuoteDb {
+  // Returns every quote ID currently in the database.
+  rpc GetAllIds (Empty) returns (IdList);
+  // Returns the quote text + author for a single ID.
+  rpc GetQuoteById (QuoteRequest) returns (QuoteResponse);
+}
+
+// Randomizer is implemented by the C++ service. Its only job is to
+// pick one ID out of a list, as elaborately as possible.
+service Randomizer {
+  rpc SelectRandomId (IdList) returns (SelectedId);
+}
+
+message Empty {}
+
+message IdList {
+  repeated int64 ids = 1;
+}
+
+message QuoteRequest {
+  int64 id = 1;
+}
+
+message QuoteResponse {
+  string quote = 1;
+  string author = 2;
+}
+
+message SelectedId {
+  int64 id = 1;
+}
