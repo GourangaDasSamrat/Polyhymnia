@@ -20,7 +20,7 @@ single `SELECT ... ORDER BY RANDOM()` would have been far too easy.
 
 **The mythology:** In Greek mythology, Polyhymnia was the goddess of sacred poetry, melody, and words.
 
-**The fun:** The name derives from Greek *Poly* (many) + *Hymnia* (words). But here's the twist—*Poly* also represents **Polyglot** (Go, C++, Rust, JavaScript), the four languages used in this project. So Polyhymnia means: *a message (Quote) delivered through many languages*.
+**The pun:** The name derives from Greek *Poly* (many) + *Hymnia* (words). But here's the twist—*Poly* also represents **Polyglot** (Go, C++, Rust, JavaScript), the four languages used in this project. So Polyhymnia means: *a message (Quote) delivered through many languages*.
 
 ---
 
