@@ -46,7 +46,7 @@ jobs:
             hub_url="https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${service_name}/tags/${TAG}"
 
             echo "Building and pushing $image_name from $dockerfile"
-            docker buildx build --platform linux/amd64 -f "$dockerfile" -t "$image_name" --push "$service_dir"
+            docker buildx build --platform linux/amd64 -f "$dockerfile" -t "$image_name" --push .
             printf '%s\n' "- ${hub_url}" >> "$IMAGE_LINES_FILE"
           done
 
