@@ -1,5 +1,13 @@
 {
-  "[javascript][html]": {
+
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  "[javascript][html][css][markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[rust]": {
@@ -11,10 +19,6 @@
   "[cpp]": {
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
     "editor.suggest.insertMode": "replace"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
   },
 
   // Go
