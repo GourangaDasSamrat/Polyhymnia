@@ -74,55 +74,24 @@ split across **five hops** through **four languages**, connected by
 
 ```
 Polyhymnia/
-├── docker/                 # Dockerfiles for each service and compose
-├── proto/                  # Shared .proto contract (quote.proto)
-├── go-gateway/             # Go HTTP server + gRPC clients (orchestrator)
-├── cpp-engine/             # C++ gRPC server (Randomizer service)
-├── rust-db/                # Rust gRPC server + SQLite (QuoteDb service)
-├── frontend/               # Static HTML/CSS/JS UI
-├── docs/                   # Installation & reference docs
-├── justfile                # Build/run recipes for every service
-├── docker-compose.yml      # Dcoker compose file
+├── docker/                    # Dockerfiles for each service and compose
+├── proto/                     # Shared .proto contract (quote.proto)
+├── go-gateway/                # Go HTTP server + gRPC clients (orchestrator)
+├── cpp-engine/                # C++ gRPC server (Randomizer service)
+├── rust-db/                   # Rust gRPC server + SQLite (QuoteDb service)
+├── frontend/                  # Static HTML/CSS/JS UI
+├── docs/                      # Installation & reference docs
+├── justfile                   # Build/run recipes for every service
+├── docker-compose.yml         # Docker compose file (local builds)
+├── docker-compose.images.yml  # Docker compose file (pre-built images)
 └── .gitignore
 ```
 
 ## Quickstart
 
-Clone this repo and run locally:
+Get Polyhymnia running in minutes: **[Quickstart Guide](docs/quickstart.md)**.
 
-```bash
-git clone https://github.com/gourangadassamrat/polyhymnia.git
-cd polyhymnia
-```
-
-Full install instructions (Linux & macOS): **[docs/installation.md](docs/installation.md)**.
-
-Once your toolchain is set up:
-
-```bash
-just build   # generate gRPC code + compile all three backend services
-just run     # build, then launch rust-db, cpp-engine, go-gateway, and the frontend together
-```
-
-Then open **http://localhost:5500** and click **Get Quote**.
-
-Alternatively, use Docker for an automatic setup (recommended for quick demos):
-
-```bash
-docker-compose build
-docker-compose up
-```
-
-This runs the same services in containers and exposes the same ports.
-
-Services and ports:
-
-| Service               | Address                           |
-| --------------------- | --------------------------------- |
-| Frontend (static)     | `http://localhost:5500`           |
-| Go API Gateway        | `http://localhost:8080/api/quote` |
-| Rust QuoteDb (gRPC)   | `localhost:50051`                 |
-| C++ Randomizer (gRPC) | `localhost:50052`                 |
+See the detailed [Installation guide](docs/installation.md) for full setup instructions.
 
 ## Docs
 
