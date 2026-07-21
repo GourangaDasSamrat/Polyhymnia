@@ -5,13 +5,11 @@
 ![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B&logoColor=white)
 
-
 **The Ultimate Overengineered Random Quote Generator.**
 
 Click a button. Get a quote. Behind the scenes, four services in four
 languages talk to each other over gRPC to make that happen — because a
 single `SELECT ... ORDER BY RANDOM()` would have been far too easy.
-
 
 ![App preview](https://i.postimg.cc/RCW1vbzF/Screenshot-2026-07-20-at-16-46-06-Polyhymnia-The-Ultimate-Overengineered-Quote-Generator.png)
 ---
@@ -20,7 +18,7 @@ single `SELECT ... ORDER BY RANDOM()` would have been far too easy.
 
 **The mythology:** In Greek mythology, Polyhymnia was the goddess of sacred poetry, melody, and words.
 
-**The pun:** The name derives from Greek *Poly* (many) + *Hymnia* (words). But here's the twist—*Poly* also represents **Polyglot** (Go, C++, Rust, JavaScript), the four languages used in this project. So Polyhymnia means: *a message (Quote) delivered through many languages*.
+**The pun:** The name derives from Greek _Poly_ (many) + _Hymnia_ (words). But here's the twist—_Poly_ also represents **Polyglot** (Go, C++, Rust, JavaScript), the four languages used in this project. So Polyhymnia means: _a message (Quote) delivered through many languages_.
 
 ---
 

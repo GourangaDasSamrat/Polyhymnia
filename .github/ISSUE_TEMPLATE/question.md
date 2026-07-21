@@ -1,9 +1,9 @@
 ---
-name: "Question"
-about: "Ask a question about using or contributing to the project"
-title: ""
-labels: "question"
-assignees: ""
+name: 'Question'
+about: 'Ask a question about using or contributing to the project'
+title: ''
+labels: 'question'
+assignees: ''
 ---
 
 **What is your question?**

@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links: []
 issue_template:
-  - name: "Bug report"
-    filename: "bug_report.md"
-  - name: "Feature request"
-    filename: "feature_request.md"
-  - name: "Documentation"
-    filename: "docs_request.md"
-  - name: "Question"
-    filename: "question.md"
+  - name: 'Bug report'
+    filename: 'bug_report.md'
+  - name: 'Feature request'
+    filename: 'feature_request.md'
+  - name: 'Documentation'
+    filename: 'docs_request.md'
+  - name: 'Question'
+    filename: 'question.md'

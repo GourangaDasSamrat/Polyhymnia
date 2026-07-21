@@ -1,9 +1,9 @@
 ---
-name: "Documentation"
-about: "Request documentation changes or additions"
-title: ""
-labels: "documentation"
-assignees: ""
+name: 'Documentation'
+about: 'Request documentation changes or additions'
+title: ''
+labels: 'documentation'
+assignees: ''
 ---
 
 **What documentation change do you suggest?**
