@@ -12,6 +12,8 @@ jobs:
   release:
     name: Publish Docker Hub images and create release
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,8 +44,9 @@ jobs:
           for dockerfile in $(git ls-files 'docker/*/Dockerfile' || true); do
             service_dir=$(dirname "$dockerfile")
             service_name=$(basename "$service_dir")
-            image_name="${{ secrets.DOCKERHUB_USERNAME }}/${service_name}:${TAG}"
-            hub_url="https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${service_name}/tags/${TAG}"
+            NAMESPACE="${DOCKERHUB_NAMESPACE:-polyhymnia}"
+            image_name="$NAMESPACE/${service_name}:${TAG}"
+            hub_url="https://hub.docker.com/r/$NAMESPACE/${service_name}/tags/${TAG}"
 
             echo "Building and pushing $image_name from $dockerfile"
             docker buildx build --platform linux/amd64 -f "$dockerfile" -t "$image_name" --push .
