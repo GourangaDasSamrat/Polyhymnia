@@ -3,15 +3,14 @@ name: Release
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+      - 'v*.*.*'
 
 permissions:
   contents: write
-  actions: read
 
 jobs:
   release:
-    name: Create Release
+    name: Publish Docker Hub images and create release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,18 +18,52 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker Hub images
+        id: push-images
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF#refs/tags/}"
+          IMAGE_LINES_FILE=$(mktemp)
+
+          for dockerfile in $(git ls-files 'docker/*/Dockerfile' || true); do
+            service_dir=$(dirname "$dockerfile")
+            service_name=$(basename "$service_dir")
+            image_name="${{ secrets.DOCKERHUB_USERNAME }}/${service_name}:${TAG}"
+            hub_url="https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/${service_name}/tags/${TAG}"
+
+            echo "Building and pushing $image_name from $dockerfile"
+            docker buildx build --platform linux/amd64 -f "$dockerfile" -t "$image_name" --push "$service_dir"
+            printf '%s\n' "- ${hub_url}" >> "$IMAGE_LINES_FILE"
+          done
+
+          echo "image_urls<<EOF" >> "$GITHUB_OUTPUT"
+          cat "$IMAGE_LINES_FILE" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          rm -f "$IMAGE_LINES_FILE"
+
       - name: Get previous tag
         id: get-previous-tag
         run: |
-          # Get the current tag that triggered the workflow
           CURRENT_TAG="${GITHUB_REF#refs/tags/}"
           echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
 
-          # Get the previous tag (or use the first commit if no previous tag exists)
           PREVIOUS_TAG=$(git tag --list --sort=-version:refname --merged "$CURRENT_TAG" | grep -v "^$CURRENT_TAG$" | head -n 1)
 
           if [ -z "$PREVIOUS_TAG" ]; then
-            # No previous tag, use the root commit
             PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
           fi
 
@@ -44,35 +77,28 @@ jobs:
           CURRENT_TAG="${{ steps.get-previous-tag.outputs.current_tag }}"
           PREVIOUS_TAG="${{ steps.get-previous-tag.outputs.previous_tag }}"
 
-          # Get all commits between previous and current tag
           if [ "$PREVIOUS_TAG" = "$(git rev-list --max-parents=0 HEAD)" ]; then
-            # If previous_tag is the root commit, use it directly
             COMMITS=$(git log --pretty=format:"%h|%an|%s" "$PREVIOUS_TAG..HEAD")
           else
             COMMITS=$(git log --pretty=format:"%h|%an|%s" "$PREVIOUS_TAG..$CURRENT_TAG")
           fi
 
-          # Initialize temporary files for each section
           TEMP_DIR=$(mktemp -d)
           touch "$TEMP_DIR"/{breaking,features,bugfixes,performance,refactor,tests,documentation,chore,other}
 
-          # Categorize commits based on conventional commits
           while IFS='|' read -r HASH AUTHOR SUBJECT; do
             if [ -z "$SUBJECT" ]; then
               continue
             fi
 
-            # Build commit link
             REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
             SHORT_HASH="${HASH:0:7}"
             COMMIT_ENTRY="- ${SUBJECT} (${AUTHOR}) [${SHORT_HASH}](${REPO_URL}/commit/${HASH})"
 
-            # Check for breaking changes (takes precedence)
             if [[ "$SUBJECT" =~ ^[a-z]+!: ]]; then
               echo "$COMMIT_ENTRY" >> "$TEMP_DIR/breaking"
             fi
 
-            # Categorize by type
             if [[ "$SUBJECT" =~ ^feat(\(.+\))?!?: ]]; then
               echo "$COMMIT_ENTRY" >> "$TEMP_DIR/features"
             elif [[ "$SUBJECT" =~ ^fix(\(.+\))?!?: ]]; then
@@ -92,7 +118,6 @@ jobs:
             fi
           done <<< "$COMMITS"
 
-          # Build release notes file
           RELEASE_NOTES_FILE=$(mktemp)
 
           [ -s "$TEMP_DIR/breaking" ] && echo -e "## ⚠️ Breaking Changes\n" >> "$RELEASE_NOTES_FILE" && cat "$TEMP_DIR/breaking" >> "$RELEASE_NOTES_FILE" && echo "" >> "$RELEASE_NOTES_FILE"
@@ -105,27 +130,48 @@ jobs:
           [ -s "$TEMP_DIR/chore" ] && echo -e "## 🔧 Chores\n" >> "$RELEASE_NOTES_FILE" && cat "$TEMP_DIR/chore" >> "$RELEASE_NOTES_FILE" && echo "" >> "$RELEASE_NOTES_FILE"
           [ -s "$TEMP_DIR/other" ] && echo -e "## Other Changes\n" >> "$RELEASE_NOTES_FILE" && cat "$TEMP_DIR/other" >> "$RELEASE_NOTES_FILE" && echo "" >> "$RELEASE_NOTES_FILE"
 
-          # If release notes are empty, set default message
           if [ ! -s "$RELEASE_NOTES_FILE" ]; then
             echo "No changes in this release." >> "$RELEASE_NOTES_FILE"
           fi
 
-          # Output the release notes using delimiter method for multi-line content
           DELIMITER="EOF_$(date +%s)"
           echo "release_notes<<$DELIMITER" >> $GITHUB_OUTPUT
           cat "$RELEASE_NOTES_FILE" >> $GITHUB_OUTPUT
           echo "$DELIMITER" >> $GITHUB_OUTPUT
 
-          # Cleanup
           rm -rf "$TEMP_DIR"
           rm "$RELEASE_NOTES_FILE"
+
+      - name: Compose release body
+        id: compose-release-body
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          IMAGE_URLS="${{ steps.push-images.outputs.image_urls }}"
+          RELEASE_NOTES="${{ steps.generate-notes.outputs.release_notes }}"
+
+          COMBINED_FILE=$(mktemp)
+          {
+            echo "Docker Hub images"
+            echo
+            printf '%s\n' "$IMAGE_URLS"
+            echo
+            printf '%s\n' "$RELEASE_NOTES"
+          } > "$COMBINED_FILE"
+
+          DELIMITER="EOF_$(date +%s)"
+          echo "release_body<<$DELIMITER" >> "$GITHUB_OUTPUT"
+          cat "$COMBINED_FILE" >> "$GITHUB_OUTPUT"
+          echo "$DELIMITER" >> "$GITHUB_OUTPUT"
+          rm -f "$COMBINED_FILE"
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.get-previous-tag.outputs.current_tag }}
           name: ${{ steps.get-previous-tag.outputs.current_tag }}
-          body: ${{ steps.generate-notes.outputs.release_notes }}
+          body: ${{ steps.compose-release-body.outputs.release_body }}
           draft: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
