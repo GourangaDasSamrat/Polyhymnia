@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,7 +45,7 @@ jobs:
           for dockerfile in $(git ls-files 'docker/*/Dockerfile' || true); do
             service_dir=$(dirname "$dockerfile")
             service_name=$(basename "$service_dir")
-            NAMESPACE="${DOCKERHUB_NAMESPACE:-polyhymnia}"
+            NAMESPACE="${DOCKERHUB_NAMESPACE:-${DOCKERHUB_USERNAME}}"
             image_name="$NAMESPACE/${service_name}:${TAG}"
             hub_url="https://hub.docker.com/r/$NAMESPACE/${service_name}/tags/${TAG}"
 
