@@ -15,6 +15,7 @@ jobs:
     env:
       DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_REPO }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,9 +46,16 @@ jobs:
           for dockerfile in $(git ls-files 'docker/*/Dockerfile' || true); do
             service_dir=$(dirname "$dockerfile")
             service_name=$(basename "$service_dir")
-            NAMESPACE="${DOCKERHUB_NAMESPACE:-${DOCKERHUB_USERNAME}}"
-            image_name="$NAMESPACE/${service_name}:${TAG}"
-            hub_url="https://hub.docker.com/r/$NAMESPACE/${service_name}/tags/${TAG}"
+            # If DOCKERHUB_REPO is provided (e.g. gourangadassamrat/polyhymnia)
+            # push all services into that single repo using tags like: repo:service-tag
+            if [ -n "${DOCKERHUB_REPO:-}" ]; then
+              image_name="${DOCKERHUB_REPO}:${service_name}-${TAG}"
+              hub_url="https://hub.docker.com/r/${DOCKERHUB_REPO}/tags/${service_name}-${TAG}"
+            else
+              NAMESPACE="${DOCKERHUB_NAMESPACE:-${DOCKERHUB_USERNAME}}"
+              image_name="$NAMESPACE/${service_name}:${TAG}"
+              hub_url="https://hub.docker.com/r/$NAMESPACE/${service_name}/tags/${TAG}"
+            fi
 
             echo "Building and pushing $image_name from $dockerfile"
             docker buildx build --platform linux/amd64 -f "$dockerfile" -t "$image_name" --push .
