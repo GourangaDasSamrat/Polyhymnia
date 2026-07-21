@@ -39,9 +39,10 @@ else()
 
     find_program(PROTOC_BIN protoc REQUIRED)
     find_program(GRPC_CPP_PLUGIN_EXE grpc_cpp_plugin REQUIRED)
+    find_library(GRPC_CPP_REFLECTION_LIB grpc++_reflection REQUIRED)
 
     set(PROTOC_EXE ${PROTOC_BIN})
-    set(POLYHYMNIA_GRPC_LIBS PkgConfig::GRPC)
+    set(POLYHYMNIA_GRPC_LIBS PkgConfig::GRPC ${GRPC_CPP_REFLECTION_LIB})
     set(POLYHYMNIA_PROTOBUF_LIBS PkgConfig::PROTOBUF)
     set(POLYHYMNIA_INCLUDE_DIRS ${GRPC_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS})
 endif()
