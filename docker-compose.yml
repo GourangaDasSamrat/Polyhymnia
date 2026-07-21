@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  rust-db:
+    build:
+      context: .
+      dockerfile: ./docker/rust-db/Dockerfile
+    ports:
+      - '50051:50051'
+    restart: unless-stopped
+
+  cpp-engine:
+    build:
+      context: .
+      dockerfile: ./docker/cpp-engine/Dockerfile
+    ports:
+      - '50052:50052'
+    restart: unless-stopped
+
+  go-gateway:
+    build:
+      context: .
+      dockerfile: ./docker/go-gateway/Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - rust-db
+      - cpp-engine
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    ports:
+      - '5500:80'
+    restart: unless-stopped
