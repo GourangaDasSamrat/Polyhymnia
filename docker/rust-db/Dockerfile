@@ -2,6 +2,7 @@ FROM rust:latest AS builder
 
 WORKDIR /usr/src/rust-db
 COPY rust-db /usr/src/rust-db
+COPY proto /usr/src/proto
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 	protobuf-compiler ca-certificates && rm -rf /var/lib/apt/lists/*
