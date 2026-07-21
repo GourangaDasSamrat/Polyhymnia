@@ -1,5 +1,11 @@
 # Polyhymnia
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)
+![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat&logo=c%2B%2B&logoColor=white)
+
+
 **The Ultimate Overengineered Random Quote Generator.**
 
 Click a button. Get a quote. Behind the scenes, four services in four
