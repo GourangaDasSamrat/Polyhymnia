@@ -4,6 +4,7 @@
 # a C++17 toolchain + gRPC/Protobuf dev libraries, Rust/cargo, Go 1.22+,
 # and Python 3 (only used to serve the static frontend).
 
+# Show the available recipes.
 default:
     @just --list
 
@@ -28,33 +29,42 @@ proto-cpp:
 
 # Rust codegen happens automatically via build.rs on `cargo build`.
 
+# Alias that runs the Go protobuf generation step.
 proto: proto-go
 
 # ---- build --------------------------------------------------------------
 
+# Build the Rust service in release mode.
 build-rust:
     cd rust-db && cargo build --release
 
+# Configure and build the C++ engine with CMake.
 build-cpp:
     cmake -B cpp-engine/build -S cpp-engine -DCMAKE_BUILD_TYPE=Release
     cmake --build cpp-engine/build
 
+# Refresh Go protobuf stubs, tidy modules, and build the gateway binary.
 build-go: proto-go
     cd go-gateway && go mod tidy && go build -o bin/gateway .
 
+# Build every service in the stack.
 build: build-rust build-cpp build-go
 
 # ---- run (each in its own terminal) --------------------------------------
 
+# Run the Rust service directly.
 run-rust:
     cd rust-db && cargo run --release
 
+# Run the C++ engine binary.
 run-cpp:
     ./cpp-engine/build/cpp-engine
 
+# Run the Go gateway service.
 run-go:
     cd go-gateway && go run .
 
+# Serve the static frontend on port 5500.
 run-frontend:
     cd frontend && python3 -m http.server 5500
 
@@ -62,6 +72,7 @@ run-frontend:
 
 # Builds everything, then launches all four processes concurrently.
 # Ctrl+C once to stop all of them.
+# Start the full stack in one shell session.
 run: build
     #!/usr/bin/env bash
     set -euo pipefail
@@ -80,5 +91,6 @@ run: build
 
     wait
 
+# Remove build artifacts, compiled binaries, and generated protobuf files.
 clean:
-    rm -rf cpp-engine/build go-gateway/bin go-gateway/proto/*.pdb.go rust-db/target rust-db/quotes.db
+    rm -rf cpp-engine/build go-gateway/bin go-gateway/proto/*.pb.go rust-db/target rust-db/quotes.*
