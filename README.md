@@ -98,6 +98,7 @@ See the detailed [Installation guide](docs/installation.md) for full setup instr
 - [Installation guide](docs/installation.md) — what to install on Linux and macOS
 - [Architecture](docs/architecture.md) — service responsibilities and the gRPC contract in detail
 - [API reference](docs/api.md) — the one HTTP endpoint, and the two gRPC services behind it
+- 📖 **[System Design Series](https://dev.to/gouranga-das-khulna/series/42362)** — in-depth blog series on dev.to covering the project design and implementation
 - [Troubleshooting](docs/troubleshooting.md) — common build/run errors and fixes
 
 ## Author

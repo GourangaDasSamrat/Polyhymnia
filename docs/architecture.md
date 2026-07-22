@@ -1,5 +1,7 @@
 # Architecture
 
+> For an in-depth exploration of the design decisions and technical implementation, check out the **[System Design Series](https://dev.to/gouranga-das-khulna/series/42362)** on dev.to.
+
 Polyhymnia deliberately spreads a single-row database lookup across
 four services and three gRPC round-trips. This document explains why
 each piece exists and how they fit together.
